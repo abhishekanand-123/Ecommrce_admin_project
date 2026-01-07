@@ -1,0 +1,144 @@
+.hero-section {
+  width: 100%;
+  height: 100vh; /* full screen height */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  /* Dark overlay for readability */
+  box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.35);
+}
+
+.hero-content {
+  color: white;
+  max-width: 900px;
+  padding: 20px;
+}
+
+/* Title */
+.hero-content h1 {
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+/* small subtitle */
+.sub-title {
+  font-size: 1rem;
+  letter-spacing: 4px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* tagline */
+.tagline {
+  font-size: 1.2rem;
+  font-weight: bold;
+  letter-spacing: 3px;
+  margin-bottom: 25px;
+}
+
+/* phone number */
+.phone-number {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* description text */
+.desc {
+  font-style: italic;
+  margin-bottom: 25px;
+  font-size: 1rem;
+}
+
+/* Emergency Button */
+.emergency-btn {
+  background: red;
+  border: none;
+  padding: 14px 30px;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 3px 3px 0px 2px black;
+  transition: 0.3s;
+}
+
+.emergency-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 3.2rem;
+  }
+
+  .phone-number {
+    font-size: 2.2rem;
+  }
+
+  .tagline {
+    font-size: 1rem;
+  }
+}
+
+/* ===== TESTIMONIAL SECTION ===== */
+.testimonials {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.testimonials h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.testimonial-list {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+
+.testimonial-card {
+  background: white;
+  width: 300px;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: 0.3s;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+}
+
+.testimonial-card img {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.testimonial-card p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.testimonial-card h4 {
+  color: #333;
+  font-weight: bold;
+}

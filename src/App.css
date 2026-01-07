@@ -1,0 +1,261 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.content {
+  padding: 40px;
+  min-height: 80vh;
+}
+
+
+/* Container */
+.product-list-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* Search Bar */
+.search-bar {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 30px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* Product grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* Product card */
+.product-card {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 15px;
+  background: white;
+  text-align: center;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  box-shadow: 0 6px 15px rgb(0 0 0 / 0.2);
+}
+
+/* Product image */
+.product-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Buttons */
+.btn, .details-btn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 10px 18px;
+  background: black;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  gap: 15px;
+}
+
+.pagination button {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Checkout container */
+.checkout-container {
+  max-width: 450px;
+  margin: 60px auto;
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: white;
+}
+
+.checkout-container h2 {
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.checkout-container input,
+.checkout-container textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 18px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.checkout-container button {
+  width: 100%;
+  padding: 14px;
+  background: black;
+  color: white;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.checkout-container button:hover {
+  background: #333;
+}
+
+/* Thank You Page */
+.thankyou-container {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.thankyou-container h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.thankyou-container p {
+  font-size: 20px;
+}
+
+.thankyou-container .btn {
+  margin-top: 25px;
+  padding: 12px 25px;
+}
+.cart-container {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 20px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
+.cart-item img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin-right: 20px;
+  border-radius: 8px;
+}
+
+.cart-details h3 {
+  margin: 0 0 8px 0;
+}
+
+.cart-details p {
+  margin: 4px 0;
+}
+
+.cart-details button {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #ff3b30;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cart-details button:hover {
+  background: #d12a1a;
+}
+
+.cart-total {
+  text-align: right;
+  margin-top: 30px;
+}
+
+.cart-total h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.cart-total button {
+  padding: 12px 25px;
+  background: #0a74da;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cart-total button:hover {
+  background: #005bb5;
+}
+
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

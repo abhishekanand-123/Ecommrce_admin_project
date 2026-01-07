@@ -1,0 +1,101 @@
+.contact-banner {
+  width: 100%;
+  height: 55vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Dark overlay for readability */
+  box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.contact-banner-content h1 {
+  color: white;
+  font-size: 3.5rem;
+  text-transform: uppercase;
+  font-weight: 900;
+}
+
+.contact-banner-content p {
+  color: white;
+  margin-top: 10px;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+}
+
+/* ===== CONTACT FORM SECTION ===== */
+.contact-section {
+  padding: 50px 20px;
+  max-width: 700px;
+  margin: auto;
+}
+
+.contact-section h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.contact-subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* ===== FORM ===== */
+.contact-form .form-group {
+  margin-bottom: 20px;
+}
+
+.contact-form label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #00aaff;
+  box-shadow: 0 0 4px rgba(0, 170, 255, 0.4);
+}
+
+/* ===== SUBMIT BUTTON ===== */
+.contact-btn {
+  width: 100%;
+  padding: 14px;
+  background: #00aaff;
+  color: white;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.contact-btn:hover {
+  background: #0088cc;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .contact-banner-content h1 {
+    font-size: 2.5rem;
+  }
+}

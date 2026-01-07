@@ -1,0 +1,81 @@
+.about-banner {
+  width: 100%;
+  height: 60vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+
+  /* dark overlay */
+  box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.about-banner-content h1 {
+  color: white;
+  font-size: 4rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.about-banner-content p {
+  color: white;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+}
+
+/* ======== ABOUT SECTION ======== */
+.about-section {
+  padding: 60px 20px;
+  background: #f6f6f6;
+}
+
+.about-container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.about-container h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #222;
+  font-weight: bold;
+}
+
+.about-container p {
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+  color: #444;
+  line-height: 1.7;
+}
+
+.about-container ul {
+  margin-top: 10px;
+  list-style: none;
+  padding: 0;
+}
+
+.about-container ul li {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 768px) {
+  .about-banner-content h1 {
+    font-size: 2.8rem;
+  }
+
+  .about-banner-content p {
+    font-size: 1.1rem;
+  }
+
+  .about-section {
+    padding: 40px 15px;
+  }
+}

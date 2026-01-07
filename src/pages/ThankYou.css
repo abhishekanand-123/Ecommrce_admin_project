@@ -1,0 +1,60 @@
+.thankyou-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f4f7fb;
+}
+
+.thankyou-box {
+  background: white;
+  padding: 35px;
+  border-radius: 14px;
+  width: 420px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.thankyou-box h1 {
+  color: #2ecc71;
+  margin-bottom: 10px;
+}
+
+.payment-details {
+  text-align: left;
+  margin-top: 20px;
+  background: #f1fdf5;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.payment-details div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.payment-details span {
+  color: #555;
+}
+
+.success {
+  color: green;
+  text-transform: capitalize;
+}
+
+.continue-btn {
+  margin-top: 25px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.continue-btn:hover {
+  background: #219150;
+}

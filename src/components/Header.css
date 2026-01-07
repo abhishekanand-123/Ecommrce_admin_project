@@ -1,0 +1,69 @@
+/* Header Container */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #222;
+  padding: 15px 30px;
+  color: white;
+}
+
+/* Logo Style */
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Navigation Links */
+.nav a {
+  color: white;
+  margin-left: 20px;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+/* Hover Effect */
+.nav a:hover {
+  color: #00d4ff;
+}
+
+/* User Name */
+.user-name {
+  color: #00d4ff;
+  margin-left: 20px;
+  font-size: 0.95rem;
+}
+
+/* Login Link */
+.login-link {
+  color: #00d4ff !important;
+  margin-left: 20px;
+  font-weight: 500;
+}
+
+/* Logout Button */
+.logout-btn {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  margin-left: 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #cc0000;
+}
+
+/* Responsive Navbar on Mobile */
+@media (max-width: 600px) {
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
