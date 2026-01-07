@@ -100,7 +100,7 @@ app.get("/products/:id", (req, res) => {
 
 
 app.post("/save-transaction", async (req, res) => {
-  const { session_id, user_id } = req.body;
+  const { session_id, user_id, referral_code } = req.body;
 
   try {
     const session = await stripe.checkout.sessions.retrieve(
@@ -130,7 +130,104 @@ app.post("/save-transaction", async (req, res) => {
       [transaction_id, user_id]
     );
 
-    // 3️⃣ Clear cart
+    // 3️⃣ Process affiliate commission if referral code exists
+    if (referral_code) {
+      console.log(`Processing affiliate commission for referral code: ${referral_code}`);
+      
+      // Find affiliate by referral code
+      db.query(
+        "SELECT id, is_affiliate FROM users WHERE affiliate_code = ? AND is_affiliate = 1",
+        [referral_code],
+        (err, affiliateResult) => {
+          if (err) {
+            console.error("Error finding affiliate:", err);
+            return;
+          }
+          
+          if (affiliateResult.length > 0) {
+            const affiliate = affiliateResult[0];
+            console.log(`Affiliate found: ID ${affiliate.id}`);
+            
+            // Get active commission rate where order amount meets minimum requirement
+            // Select the highest rate that the order qualifies for
+            db.query(
+              `SELECT commission_percentage FROM commission_rates 
+               WHERE is_active = 1 AND min_sales_amount <= ? 
+               ORDER BY min_sales_amount DESC LIMIT 1`,
+              [amount],
+              (err2, rateResult) => {
+                if (err2) {
+                  console.error("Error fetching commission rate:", err2);
+                  return;
+                }
+                
+                if (rateResult.length > 0) {
+                  const commissionRate = rateResult[0].commission_percentage;
+                  const commissionAmount = (amount * commissionRate) / 100;
+                  
+                  console.log(`Commission calculated: ${commissionAmount} (${commissionRate}% of ${amount})`);
+                  
+                  // Save affiliate commission with 'pending' status
+                  db.query(
+                    `INSERT INTO affiliate_commissions 
+                     (affiliate_user_id, order_id, order_amount, commission_rate, commission_amount, status, referred_user_id, referral_code)
+                     VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)`,
+                    [affiliate.id, transaction_id, amount, commissionRate, commissionAmount, user_id, referral_code],
+                    (err3, result) => {
+                      if (err3) {
+                        console.error("Error saving commission:", err3);
+                      } else {
+                        console.log(`Commission saved successfully! Commission ID: ${result.insertId}`);
+                      }
+                    }
+                  );
+                } else {
+                  // If no rate found, use default 0% or first available rate
+                  db.query(
+                    "SELECT commission_percentage FROM commission_rates WHERE is_active = 1 ORDER BY min_sales_amount ASC LIMIT 1",
+                    (err3, defaultRateResult) => {
+                      if (err3) {
+                        console.error("Error fetching default commission rate:", err3);
+                        return;
+                      }
+                      
+                      if (defaultRateResult.length > 0) {
+                        const commissionRate = defaultRateResult[0].commission_percentage;
+                        const commissionAmount = (amount * commissionRate) / 100;
+                        
+                        console.log(`Using default commission rate: ${commissionAmount} (${commissionRate}% of ${amount})`);
+                        
+                        db.query(
+                          `INSERT INTO affiliate_commissions 
+                           (affiliate_user_id, order_id, order_amount, commission_rate, commission_amount, status, referred_user_id, referral_code)
+                           VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)`,
+                          [affiliate.id, transaction_id, amount, commissionRate, commissionAmount, user_id, referral_code],
+                          (err4, result) => {
+                            if (err4) {
+                              console.error("Error saving commission:", err4);
+                            } else {
+                              console.log(`Commission saved successfully! Commission ID: ${result.insertId}`);
+                            }
+                          }
+                        );
+                      } else {
+                        console.log("No active commission rate found. Commission not created.");
+                      }
+                    }
+                  );
+                }
+              }
+            );
+          } else {
+            console.log(`No affiliate found for referral code: ${referral_code}`);
+          }
+        }
+      );
+    } else {
+      console.log("No referral code provided in transaction");
+    }
+
+    // 4️⃣ Clear cart
     db.query("DELETE FROM carts WHERE user_id=?", [user_id]);
 
     res.json({ success: true, transaction_id });
@@ -571,7 +668,9 @@ app.post("/login", (req, res) => {
           id: user.id,
           username: user.username,
           email: user.email,
-          country: user.country
+          country: user.country,
+          is_affiliate: user.is_affiliate || 0,
+          affiliate_code: user.affiliate_code || null
         }
       });
     }
@@ -781,6 +880,229 @@ app.post("/create-checkout-session", async (req, res) => {
 });
 
 
+
+// --------------------------------------------
+// AFFILIATE MANAGEMENT APIs
+// --------------------------------------------
+
+// Get all affiliate users
+app.get("/affiliates", (req, res) => {
+  db.query(
+    "SELECT id, username, email, country, is_affiliate, affiliate_code, created_at FROM users WHERE is_affiliate = 1",
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "DB Error" });
+      res.json(result);
+    }
+  );
+});
+
+// Get all users (for admin to make them affiliates)
+app.get("/users", (req, res) => {
+  db.query(
+    "SELECT id, username, email, country, is_affiliate, affiliate_code, created_at FROM users",
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "DB Error" });
+      res.json(result);
+    }
+  );
+});
+
+// Make user an affiliate
+app.put("/users/:id/make-affiliate", (req, res) => {
+  const { id } = req.params;
+  const { affiliate_code } = req.body;
+
+  if (!affiliate_code) {
+    return res.status(400).json({ message: "Affiliate code is required" });
+  }
+
+  // Check if affiliate code already exists
+  db.query(
+    "SELECT * FROM users WHERE affiliate_code = ? AND id != ?",
+    [affiliate_code, id],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "DB Error" });
+      
+      if (result.length > 0) {
+        return res.status(400).json({ message: "Affiliate code already exists" });
+      }
+
+      db.query(
+        "UPDATE users SET is_affiliate = 1, affiliate_code = ? WHERE id = ?",
+        [affiliate_code.toUpperCase(), id],
+        (err2, result2) => {
+          if (err2) return res.status(500).json({ message: "DB Error" });
+          res.json({ message: "User made affiliate successfully" });
+        }
+      );
+    }
+  );
+});
+
+// Remove affiliate status
+app.put("/users/:id/remove-affiliate", (req, res) => {
+  const { id } = req.params;
+  db.query(
+    "UPDATE users SET is_affiliate = 0, affiliate_code = NULL WHERE id = ?",
+    [id],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "DB Error" });
+      res.json({ message: "Affiliate status removed" });
+    }
+  );
+});
+
+// Get all commission rates
+app.get("/commission-rates", (req, res) => {
+  db.query("SELECT * FROM commission_rates ORDER BY min_sales_amount ASC", (err, result) => {
+    if (err) return res.status(500).json({ message: "DB Error" });
+    res.json(result);
+  });
+});
+
+// Add commission rate
+app.post("/commission-rates", (req, res) => {
+  const { rate_name, commission_percentage, min_sales_amount, is_active, cookie_duration } = req.body;
+
+  db.query(
+    `INSERT INTO commission_rates (rate_name, commission_percentage, min_sales_amount, is_active, cookie_duration)
+     VALUES (?, ?, ?, ?, ?)`,
+    [rate_name, commission_percentage || 0, min_sales_amount || 0, is_active ? 1 : 0, cookie_duration || 30],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "DB Error" });
+      res.json({ message: "Commission rate added", id: result.insertId });
+    }
+  );
+});
+
+// Update commission rate
+app.put("/commission-rates/:id", (req, res) => {
+  const { id } = req.params;
+  const { rate_name, commission_percentage, min_sales_amount, is_active, cookie_duration } = req.body;
+
+  db.query(
+    `UPDATE commission_rates 
+     SET rate_name = ?, commission_percentage = ?, min_sales_amount = ?, is_active = ?, cookie_duration = ?
+     WHERE id = ?`,
+    [rate_name, commission_percentage || 0, min_sales_amount || 0, is_active ? 1 : 0, cookie_duration || 30, id],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "DB Error" });
+      res.json({ message: "Commission rate updated" });
+    }
+  );
+});
+
+// Delete commission rate
+app.delete("/commission-rates/:id", (req, res) => {
+  const { id } = req.params;
+  db.query("DELETE FROM commission_rates WHERE id = ?", [id], (err, result) => {
+    if (err) return res.status(500).json({ message: "DB Error" });
+    res.json({ message: "Commission rate deleted" });
+  });
+});
+
+// Get all affiliate commissions
+app.get("/affiliate-commissions", (req, res) => {
+  db.query(
+    `SELECT ac.*, u.username as affiliate_username, u.email as affiliate_email
+     FROM affiliate_commissions ac
+     JOIN users u ON ac.affiliate_user_id = u.id
+     ORDER BY ac.created_at DESC`,
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "DB Error" });
+      res.json(result);
+    }
+  );
+});
+
+// Get commissions for specific affiliate
+app.get("/affiliate-commissions/:affiliate_id", (req, res) => {
+  const { affiliate_id } = req.params;
+  db.query(
+    `SELECT * FROM affiliate_commissions 
+     WHERE affiliate_user_id = ? 
+     ORDER BY created_at DESC`,
+    [affiliate_id],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "DB Error" });
+      res.json(result);
+    }
+  );
+});
+
+// Update commission status
+app.put("/affiliate-commissions/:id/status", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!['pending', 'paid', 'cancelled'].includes(status)) {
+    return res.status(400).json({ message: "Invalid status" });
+  }
+
+  db.query(
+    "UPDATE affiliate_commissions SET status = ? WHERE id = ?",
+    [status, id],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "DB Error" });
+      res.json({ message: "Commission status updated" });
+    }
+  );
+});
+
+// Get product commission (for affiliate dashboard)
+app.get("/products/:id/commission", (req, res) => {
+  const { id } = req.params;
+  
+  // Get product price first
+  db.query("SELECT price FROM products WHERE id = ?", [id], (err2, productResult) => {
+    if (err2) return res.status(500).json({ message: "DB Error" });
+    
+    if (productResult.length === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    
+    const productPrice = productResult[0].price;
+    
+    // Get active commission rate where product price meets minimum requirement
+    db.query(
+      `SELECT commission_percentage FROM commission_rates 
+       WHERE is_active = 1 AND min_sales_amount <= ? 
+       ORDER BY min_sales_amount DESC LIMIT 1`,
+      [productPrice],
+      (err, rateResult) => {
+        if (err) return res.status(500).json({ message: "DB Error" });
+        
+        // If no rate found, use first available rate
+        if (rateResult.length === 0) {
+          db.query(
+            "SELECT commission_percentage FROM commission_rates WHERE is_active = 1 ORDER BY min_sales_amount ASC LIMIT 1",
+            (err3, defaultRateResult) => {
+              if (err3) return res.status(500).json({ message: "DB Error" });
+              
+              const commissionRate = defaultRateResult.length > 0 ? defaultRateResult[0].commission_percentage : 0;
+              const commissionAmount = (productPrice * commissionRate) / 100;
+              
+              res.json({
+                product_price: productPrice,
+                commission_rate: commissionRate,
+                commission_amount: commissionAmount
+              });
+            }
+          );
+        } else {
+          const commissionRate = rateResult[0].commission_percentage;
+          const commissionAmount = (productPrice * commissionRate) / 100;
+          
+          res.json({
+            product_price: productPrice,
+            commission_rate: commissionRate,
+            commission_amount: commissionAmount
+          });
+        }
+      }
+    );
+  });
+});
 
 // --------------------------------------------
 // START SERVER

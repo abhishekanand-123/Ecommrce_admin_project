@@ -61,6 +61,11 @@ function Header() {
         {user ? (
           <>
             <span className="user-name">Hi, {user.username}</span>
+            {user.is_affiliate === 1 && (
+              <Link to="/affiliate-dashboard" className="affiliate-link">
+                <i className="mdi mdi-chart-line"></i> Affiliate Dashboard
+              </Link>
+            )}
             <button onClick={handleLogout} className="logout-btn">Logout</button>
           </>
         ) : (

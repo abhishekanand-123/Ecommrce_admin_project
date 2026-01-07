@@ -8,6 +8,20 @@ function ThankYou() {
   const sessionId = params.get("session_id");
   const [data, setData] = useState(null);
 
+  // Function to get referral code from cookies
+  const getReferralCode = () => {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === 'referral_code') {
+        console.log('Referral code found in cookie:', value);
+        return value;
+      }
+    }
+    console.log('No referral code found in cookies');
+    return null;
+  };
+
   useEffect(() => {
     async function fetchData() {
       // Get user_id from localStorage
@@ -19,11 +33,22 @@ function ThankYou() {
         return;
       }
 
+      // Get referral code from cookie
+      const referralCode = getReferralCode();
+      
+      if (referralCode) {
+        console.log('Sending referral code to server:', referralCode);
+      }
+
       // 1️⃣ Save transaction (this also clears the cart on server)
       const saveRes = await fetch("http://localhost:5000/save-transaction", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId, user_id: userId }),
+        body: JSON.stringify({ 
+          session_id: sessionId, 
+          user_id: userId,
+          referral_code: referralCode 
+        }),
       });
 
       if (!saveRes.ok) {

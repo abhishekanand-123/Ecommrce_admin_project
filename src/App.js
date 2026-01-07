@@ -20,6 +20,7 @@ import RegisterUser from "./pages/Register_user";
 import CartPage from "./pages/CartPage";
 import ViewProducts from "./pages/ViewProducts";
 import OrderPage from "./pages/OrderPage";
+import AffiliateDashboard from "./pages/AffiliateDashboard";
 
 // Admin
 import AdminLayout from "./admin/AdminLayout";
@@ -36,6 +37,9 @@ import AdminRegister from "./admin/pages/samples/Register";
 import AdminForgotPassword from "./admin/pages/samples/ForgotPassword";
 import ProductManagement from "./admin/pages/products/ProductManagement";
 import CouponManagement from "./admin/pages/coupons/CouponManagement";
+import AffiliateManagement from "./admin/pages/affiliates/AffiliateManagement";
+import CommissionRatesManagement from "./admin/pages/affiliates/CommissionRatesManagement";
+import AffiliateCommissions from "./admin/pages/affiliates/AffiliateCommissions";
 
 import "./App.css";
 
@@ -53,6 +57,9 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="products" element={<ProductManagement />} />
           <Route path="coupons" element={<CouponManagement />} />
+          <Route path="affiliates" element={<AffiliateManagement />} />
+          <Route path="commission-rates" element={<CommissionRatesManagement />} />
+          <Route path="affiliate-commissions" element={<AffiliateCommissions />} />
           <Route path="buttons" element={<Buttons />} />
           <Route path="dropdowns" element={<Dropdowns />} />
           <Route path="typography" element={<Typography />} />
@@ -83,6 +90,7 @@ function App() {
                   <Route path="view-products" element={<ViewProducts />} />
                   <Route path="cart" element={<CartPage />} />
                   <Route path="orders" element={<OrderPage />} />
+                  <Route path="affiliate-dashboard" element={<AffiliateDashboard />} />
                 </Routes>
               </main>
               <Footer />

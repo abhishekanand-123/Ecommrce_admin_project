@@ -42,6 +42,26 @@
   font-weight: 500;
 }
 
+/* Affiliate Link */
+.affiliate-link {
+  background: linear-gradient(to right, #da8cff, #9a55ff);
+  color: white !important;
+  padding: 8px 15px;
+  margin-left: 15px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: 0.3s;
+}
+
+.affiliate-link:hover {
+  opacity: 0.9;
+  color: white !important;
+}
+
 /* Logout Button */
 .logout-btn {
   background: #ff4444;

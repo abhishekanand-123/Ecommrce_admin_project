@@ -60,6 +60,32 @@ const Sidebar = () => {
           </Link>
         </li>
 
+        {/* Affiliate Management */}
+        <li className={`nav-item ${isMenuActive(['/admin/affiliates', '/admin/commission-rates', '/admin/affiliate-commissions']) ? 'active' : ''}`}>
+          <a 
+            className="nav-link"
+            onClick={() => toggleMenu('affiliates')}
+            style={{ cursor: 'pointer' }}
+          >
+            <span className="menu-icon"><i className="mdi mdi-account-group"></i></span>
+            <span className="menu-title">Affiliate System</span>
+            <i className={`menu-arrow mdi ${openMenus.affiliates ? 'mdi-chevron-down' : 'mdi-chevron-right'}`}></i>
+          </a>
+          {openMenus.affiliates && (
+            <ul className="nav sub-menu">
+              <li className="nav-item">
+                <Link className={`nav-link ${isActive('/admin/affiliates') ? 'active' : ''}`} to="/admin/affiliates">Affiliate Users</Link>
+              </li>
+              <li className="nav-item">
+                <Link className={`nav-link ${isActive('/admin/commission-rates') ? 'active' : ''}`} to="/admin/commission-rates">Commission Rates</Link>
+              </li>
+              <li className="nav-item">
+                <Link className={`nav-link ${isActive('/admin/affiliate-commissions') ? 'active' : ''}`} to="/admin/affiliate-commissions">Commissions</Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
         {/* Basic UI Elements */}
         <li className={`nav-item ${isMenuActive(['/admin/buttons', '/admin/dropdowns', '/admin/typography']) ? 'active' : ''}`}>
           <a 
