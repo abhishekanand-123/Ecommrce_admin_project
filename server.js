@@ -281,12 +281,22 @@ app.get("/transaction-details/:transaction_id", (req, res) => {
 
 // Add new product
 app.post("/products", upload.single("image"), (req, res) => {
-  const { title, price, description } = req.body;
+  const { title, price, description, commission_percentage } = req.body;
   const image = req.file ? req.file.filename : null;
+  
+  // Convert commission_percentage to number or NULL
+  let commission = null;
+  if (commission_percentage !== null && 
+      commission_percentage !== undefined && 
+      commission_percentage !== '' &&
+      !isNaN(parseFloat(commission_percentage)) &&
+      parseFloat(commission_percentage) >= 0) {
+    commission = parseFloat(commission_percentage);
+  }
 
   db.query(
-    "INSERT INTO products (title, price, description, image) VALUES (?, ?, ?, ?)",
-    [title, price, description, image],
+    "INSERT INTO products (title, price, description, image, commission_percentage) VALUES (?, ?, ?, ?, ?)",
+    [title, price, description, image, commission],
     (err, result) => {
       if (err) return res.status(500).json({ message: "DB Error" });
       res.json({ message: "Product Added", productId: result.insertId });
@@ -297,16 +307,26 @@ app.post("/products", upload.single("image"), (req, res) => {
 // Update product
 app.put("/products/:id", upload.single("image"), (req, res) => {
   const { id } = req.params;
-  const { title, price, description } = req.body;
+  const { title, price, description, commission_percentage } = req.body;
   const image = req.file ? req.file.filename : null;
+  
+  // Convert commission_percentage to number or NULL
+  let commission = null;
+  if (commission_percentage !== null && 
+      commission_percentage !== undefined && 
+      commission_percentage !== '' &&
+      !isNaN(parseFloat(commission_percentage)) &&
+      parseFloat(commission_percentage) >= 0) {
+    commission = parseFloat(commission_percentage);
+  }
 
   let query, params;
   if (image) {
-    query = "UPDATE products SET title = ?, price = ?, description = ?, image = ? WHERE id = ?";
-    params = [title, price, description, image, id];
+    query = "UPDATE products SET title = ?, price = ?, description = ?, image = ?, commission_percentage = ? WHERE id = ?";
+    params = [title, price, description, image, commission, id];
   } else {
-    query = "UPDATE products SET title = ?, price = ?, description = ? WHERE id = ?";
-    params = [title, price, description, id];
+    query = "UPDATE products SET title = ?, price = ?, description = ?, commission_percentage = ? WHERE id = ?";
+    params = [title, price, description, commission, id];
   }
 
   db.query(query, params, (err, result) => {

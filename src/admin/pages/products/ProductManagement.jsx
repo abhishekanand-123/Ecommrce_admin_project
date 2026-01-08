@@ -9,6 +9,7 @@ const ProductManagement = () => {
     title: '',
     price: '',
     description: '',
+    commission_percentage: '',
     image: null
   });
 
@@ -49,6 +50,7 @@ const ProductManagement = () => {
     data.append('title', formData.title);
     data.append('price', formData.price);
     data.append('description', formData.description);
+    data.append('commission_percentage', formData.commission_percentage || '');
     if (formData.image) {
       data.append('image', formData.image);
     }
@@ -62,7 +64,7 @@ const ProductManagement = () => {
       if (res.ok) {
         alert('Product added successfully!');
         setShowModal(false);
-        setFormData({ title: '', price: '', description: '', image: null });
+        setFormData({ title: '', price: '', description: '', commission_percentage: '', image: null });
         fetchProducts();
       }
     } catch (error) {
@@ -79,6 +81,7 @@ const ProductManagement = () => {
     data.append('title', formData.title);
     data.append('price', formData.price);
     data.append('description', formData.description);
+    data.append('commission_percentage', formData.commission_percentage || '');
     if (formData.image) {
       data.append('image', formData.image);
     }
@@ -93,7 +96,7 @@ const ProductManagement = () => {
         alert('Product updated successfully!');
         setShowModal(false);
         setEditingProduct(null);
-        setFormData({ title: '', price: '', description: '', image: null });
+        setFormData({ title: '', price: '', description: '', commission_percentage: '', image: null });
         fetchProducts();
       }
     } catch (error) {
@@ -128,6 +131,7 @@ const ProductManagement = () => {
       title: product.title,
       price: product.price,
       description: product.description || '',
+      commission_percentage: product.commission_percentage || '',
       image: null
     });
     setShowModal(true);
@@ -162,6 +166,7 @@ const ProductManagement = () => {
                   <th>Image</th>
                   <th>Title</th>
                   <th>Price</th>
+                  <th>Commission %</th>
                   <th>Description</th>
                   <th>Actions</th>
                 </tr>
@@ -178,6 +183,11 @@ const ProductManagement = () => {
                     </td>
                     <td>{product.title}</td>
                     <td>₹{product.price}</td>
+                    <td>
+                      {product.commission_percentage !== null && product.commission_percentage !== undefined 
+                        ? `${product.commission_percentage}%` 
+                        : <span style={{ color: '#999' }}>Global Rate</span>}
+                    </td>
                     <td>{product.description?.substring(0, 50)}...</td>
                     <td>
                       <button 
@@ -231,6 +241,23 @@ const ProductManagement = () => {
                   onChange={handleChange}
                   required
                 />
+              </div>
+              <div className="form-group">
+                <label>Commission Percentage (%)</label>
+                <input
+                  type="number"
+                  name="commission_percentage"
+                  className="form-control"
+                  value={formData.commission_percentage}
+                  onChange={handleChange}
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  placeholder="Leave empty to use global commission rates"
+                />
+                <small style={{ color: '#666', fontSize: '12px', display: 'block', marginTop: '5px' }}>
+                  If set, this product will use this commission rate. Leave empty to use global commission rates.
+                </small>
               </div>
               <div className="form-group">
                 <label>Description</label>
