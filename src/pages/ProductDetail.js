@@ -148,9 +148,11 @@ function ProductDetail() {
       </div>
 
       <div className="right">
-        <h2>{product.title}</h2>
-        <p className="price">₹{product.price}</p>
-        <p>{product.description}</p>
+        <h2 className="product-title">{product.title}</h2>
+        <p className="price">₹{parseFloat(product.price).toFixed(2)}</p>
+        <div className="product-description">
+          <p>{product.description || 'No description available.'}</p>
+        </div>
 
         {/* Affiliate Commission Info */}
         {isAffiliate && commission && (
@@ -197,7 +199,7 @@ function ProductDetail() {
         )}
 
         <button className="add-btn" onClick={addToCart}>
-          Add to Cart
+          <i className="mdi mdi-cart-plus"></i> Add to Cart
         </button>
       </div>
 
