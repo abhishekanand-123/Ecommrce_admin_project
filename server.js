@@ -1073,8 +1073,8 @@ app.put("/affiliate-commissions/:id/status", (req, res) => {
 app.get("/products/:id/commission", (req, res) => {
   const { id } = req.params;
   
-  // Get product price first
-  db.query("SELECT price FROM products WHERE id = ?", [id], (err2, productResult) => {
+  // Get product price and commission_percentage
+  db.query("SELECT price, commission_percentage FROM products WHERE id = ?", [id], (err2, productResult) => {
     if (err2) return res.status(500).json({ message: "DB Error" });
     
     if (productResult.length === 0) {
@@ -1082,8 +1082,21 @@ app.get("/products/:id/commission", (req, res) => {
     }
     
     const productPrice = productResult[0].price;
+    const productCommissionPercentage = productResult[0].commission_percentage;
     
-    // Get active commission rate where product price meets minimum requirement
+    // If product has a specific commission_percentage set, use that
+    if (productCommissionPercentage !== null && productCommissionPercentage !== undefined) {
+      const commissionRate = parseFloat(productCommissionPercentage);
+      const commissionAmount = (productPrice * commissionRate) / 100;
+      
+      return res.json({
+        product_price: productPrice,
+        commission_rate: commissionRate,
+        commission_amount: commissionAmount
+      });
+    }
+    
+    // Otherwise, use global commission rates based on product price
     db.query(
       `SELECT commission_percentage FROM commission_rates 
        WHERE is_active = 1 AND min_sales_amount <= ? 
